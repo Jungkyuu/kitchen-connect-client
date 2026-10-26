@@ -1,0 +1,152 @@
+// pages/api/comments/[commentId].js (Update/Delete Comment: PUT, DELETE)
+
+import clientPromise from "../../../lib/mongodb";
+import { ObjectId } from "mongodb";
+import jwt from "jsonwebtoken";
+
+export default async function handler(req, res) {
+  const client = await clientPromise;
+  const db = client.db("kitchen-connect");
+
+  const { commentId } = req.query;
+
+  // Token and User ID validation
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) return res.status(401).json({ message: "Login required." });
+
+  let decoded;
+  try {
+    decoded = jwt.verify(token, process.env.JWT_SECRET);
+  } catch {
+    return res.status(401).json({ message: "Invalid token. Unauthorized." });
+  }
+  const authenticatedUserId = decoded.userId;
+
+  // ID format validation
+  let commentObjectId;
+  let userObjectId;
+  try {
+    commentObjectId = new ObjectId(commentId);
+    userObjectId = new ObjectId(authenticatedUserId);
+  } catch (e) {
+    return res.status(400).json({ message: "Invalid ID format." });
+  }
+
+  try {
+    // Comment existence and ownership check
+    const comment = await db
+      .collection("comments")
+      .findOne({ _id: commentObjectId });
+    if (!comment)
+      return res.status(404).json({ message: "Comment not found." });
+
+    if (!comment.userId.equals(userObjectId)) {
+      return res
+        .status(403)
+        .json({ message: "You can only edit or delete your own comments." });
+    }
+
+    if (req.method === "PUT") {
+      // --- Update (PUT) ---
+      const { text } = req.body;
+      if (!text)
+        return res
+          .status(400)
+          .json({ message: "Comment text is required for update." });
+
+      await db
+        .collection("comments")
+        .updateOne(
+          { _id: commentObjectId },
+          { $set: { text, updatedAt: new Date() } }
+        );
+  try {
+        const post = await db.collection("posts").findOne({ _id: comment.postId }, { projection: { title: 1 } });
+        const title = post?.title || null;
+        try {
+          const u = await db.collection("users").findOne({ _id: comment.userId }, { projection: { history: 1 } });
+          if (!Array.isArray(u?.history)) {
+            await db.collection("users").updateOne({ _id: comment.userId }, { $set: { history: [] } });
+          }
+        } catch (e) {
+          console.warn("Failed to ensure history array before comment edit push", e);
+        }
+
+        await db.collection("users").updateOne(
+          { _id: comment.userId },
+          {
+            $push: {
+              history: {
+                $each: [
+                  {
+                    type: "comment_edited",
+                    postId: comment.postId,
+                    commentId: commentObjectId,
+                    text: text,
+                    title,
+                    createdAt: new Date(),
+                  },
+                ],
+                $position: 0,
+                $slice: 200,
+              },
+            },
+          }
+        );
+      } catch (e) {
+        console.error("Failed to record comment edit in history", e);
+      }
+
+      res.status(200).json({ message: "Comment updated successfully." });
+    } else if (req.method === "DELETE") {
+      // --- Delete (DELETE) ---
+      await db.collection("comments").deleteOne({ _id: commentObjectId });
+      
+      try {
+        const post = await db.collection("posts").findOne({ _id: comment.postId }, { projection: { title: 1 } });
+        const title = post?.title || null;
+        try {
+          const u = await db.collection("users").findOne({ _id: comment.userId }, { projection: { history: 1 } });
+          if (!Array.isArray(u?.history)) {
+            await db.collection("users").updateOne({ _id: comment.userId }, { $set: { history: [] } });
+          }
+        } catch (e) {
+          console.warn("Failed to ensure history array before comment delete push", e);
+        }
+
+        await db.collection("users").updateOne(
+          { _id: comment.userId },
+          {
+            $push: {
+              history: {
+                $each: [
+                  {
+                    type: "comment_deleted",
+                    postId: comment.postId,
+                    commentId: commentObjectId,
+                    text: comment.text || null,
+                    title,
+                    createdAt: new Date(),
+                  },
+                ],
+                $position: 0,
+                $slice: 200,
+              },
+            },
+          }
+        );
+      } catch (e) {
+        console.error("Failed to record comment deletion in history", e);
+      }
+
+      res.status(200).json({ message: "Comment deleted successfully." });
+    } else {
+      res.status(405).json({
+        message: "Method Not Allowed. Only PUT and DELETE are allowed.",
+      });
+    }
+  } catch (error) {
+    console.error("Comment operation error:", error);
+    res.status(500).json({ message: "Internal server error occurred." });
+  }
+}

@@ -14,8 +14,8 @@ export default async function handler(req, res) {
     const posts = await db
       .collection("posts")
       .aggregate([
-        { $match: { photo: { $exists: true, $ne: "" } } },
-        { $sample: { size: 30 } },
+        { $sample: { size: 1 } }, 
+        { $sort: { createdAt: -1 } }
       ])
       .toArray();
 
@@ -26,7 +26,7 @@ export default async function handler(req, res) {
       excerpt: p.excerpt ?? (p.content ? String(p.content).slice(0, 120) : ""),
       authorId: p.authorId,
       createdAt: p.createdAt,
-      photo: p.photo || p.imageUrl || p.image || null,
+      photo: p.photo // need to add later
     }));
 
     res.status(200).json({ items });

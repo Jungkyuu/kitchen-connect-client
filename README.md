@@ -1,95 +1,55 @@
-# Kitchen-Connect
+# Kitchen-Connection
 
-A social platform for sharing, discovering, and managing cooking recipes built with **Next.js** and **MongoDB Atlas**.  
-
-Users can post, browse, and save recipes, and interact with other food enthusiasts.
+A recipe sharing and social platform built with **Next.js** and **MongoDB Atlas**.  
 
 ---
 
 ## Getting Started
-1. Clone the repository:
-    ```bash
-    git clone [YOUR_REPOSITORY_URL]
-    cd kitchen-connect-client
-    ```
-2. Install dependencies:
-    ```bash
-    npm install
-    ```
-3. Environment Variables
-  Create a file named **`.env.local`** in the root directory and configure the following variables:
-  
-   ```plaintext
-   # Database Connection
-   MONGODB_URI=[YOUR_MONGO_DB_CONNECTION_STRING_HERE]
-   
-   # NextAuth Configuration
-   NEXTAUTH_SECRET=[A_LONG_RANDOM_STRING_FOR_SECURITY]
-   # NEXTAUTH_URL=http://localhost:3000 (Optional for development)
-   
-   # JWT_SECRET (Used if you handle custom JWTs, separate from NextAuth)
-   JWT_SECRET=[YOUR_CUSTOM_JWT]
-   
-   # OAuth Provider Example (Required if enabling "Sign in with Google")
-   # GOOGLE_CLIENT_ID=...
-   # GOOGLE_CLIENT_SECRET=...
-   
-   # Spoonacular API Key (If using external recipe data/search)
-   # SPOONACULAR_API_KEY=
-   ```
 
-4. Run the development server (Locally):
-   ```bash
-   npm run dev
-   ```
-   Open http://localhost:3000 in your browser.
+Install dependencies:
+```bash
+npm install
+Run the development server:
 
----
-## Main Pages & Endpoints
+npm run dev
+Open http://localhost:3000 in your browser.
 
-| Path | Description |
-| :--- | :--- |
-| `/login` | User login page. |
-| `/register` | New user registration. |
-| `/mainpage` | Main feed/dashboard with all recipes. |
-| `/posts/create` | Form to create a new recipe post. |
-| `/users/[userId]` | User profile and their published recipes. |
-| `/posts/[postId]` | Detailed view of a specific recipe post. |
+Main Pages
+/login → User login
 
+/register → User registration
 
-## Tech Stack
-- Frontend Framework: Next.js (Pages Router)
+/mainpage → Main feed with recipes
 
-- Data Fetching: SWR
+/posts/create → Create a new post
 
-- Database: MongoDB Atlas (via mongodb official driver)
+/posts/[postId] → Post details
 
-- Authentication: NextAuth.js
+/users/[userId] → User profile
 
-- Styling: CSS / React-Bootstrap
+Tech Stack
+Frontend: Next.js (Pages Router)
 
-- File Handling: formidable / multer
+Database: MongoDB Atlas
 
----
+Styling: CSS
 
-## Deployment
-The project is configured for seamless deployment on Vercel.
+Deployment
+The project can be deployed on Vercel.
+Add your MongoDB connection string in .env.local.
 
-Important: Ensure all necessary environment variables (especially MONGODB_URI and NEXTAUTH_SECRET) are correctly set in your Vercel project settings for the Production environment.
+Learn More
 
----
-
-## Learn More
 To learn more about the technologies used in this project:
 
-- Next.js Documentation
+Next.js Documentation
  – features and API reference
 
-- Learn Next.js
+Learn Next.js
  – interactive tutorial
 
-- MongoDB Documentation
+MongoDB Documentation
  – database guides and references
 
-- Vercel Deployment Docs
+Vercel Deployment Docs
  – how to deploy Next.js apps

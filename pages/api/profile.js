@@ -35,7 +35,6 @@ export default async function handler(req, res) {
         firstName: user.firstName || "",
         lastName: user.lastName || "",
         phone: user.phone || "",
-        profileImage: user.profileImage || "/avatar.png",
         googleId: user.googleId ?? null,
       });
     } else if (req.method === "PUT") {

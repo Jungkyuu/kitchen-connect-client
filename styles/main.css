@@ -1,3 +1,6 @@
+/* src/styles/main.css */
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap");
+
 /* Feed interaction button: transparent by default, black on hover */
 .feed-action-btn {
   background: transparent;
@@ -16,8 +19,6 @@
   background: #222;
   color: #fff;
 }
-/* src/styles/main.css */
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap");
 
 :root {
   --primary-color: #010101;

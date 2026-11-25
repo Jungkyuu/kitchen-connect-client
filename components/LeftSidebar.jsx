@@ -6,7 +6,7 @@ import PostCard from "@/components/PostCard";
 import Link from "next/link";
 const GEOLOCATION_TIMEOUT = 8000;
 
-function ToggleList({ title, isAdmin }) {
+function ToggleList({ title, isAdmin = false }) {
   const [open, setOpen] = useState(true);
   return (
     <div className="mainpage-left-toggle-list">
@@ -36,13 +36,13 @@ function ToggleList({ title, isAdmin }) {
             </a>
           </li>
           <li className="list-item">
-            <Link className="list-link" href="/browse">
+            <a className="list-link" href="#/action-2">
               <span style={{ marginRight: "18px" }}>🔎</span>
               Browse
-            </Link>
+            </a>
           </li>
           <li className="list-item">
-            <a className="list-link" href="/explore">
+            <a className="list-link" href="#/action-1">
               <span style={{ marginRight: "18px" }}>🌎</span>Explore
             </a>
           </li>

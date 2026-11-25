@@ -1,6 +1,5 @@
 // pages/posts/[postId].jsx
 import Link from "next/link";
-import TooltipButton from "@/components/TooltipButton";
 import CommentSection from "@/components/CommentSection";
 import ChatWidget from "@/components/ChatWidget";
 import { useEffect, useRef, useState } from "react";
@@ -144,7 +143,6 @@ export default function PostPage({ post: initialPost, notFound, postIdFromProps 
   const excludeList = resolveList(post?.excludeIngredients, post?.exclude);
   const includeDisplay = includeList.length ? includeList.join(", ") : "None";
   const excludeDisplay = excludeList.length ? excludeList.join(", ") : "None";
-  const dietaryTags = splitInputList(post?.dietary);
 
   if (notFound || !post) {
     return (
@@ -541,30 +539,27 @@ export default function PostPage({ post: initialPost, notFound, postIdFromProps 
               )}
             </p>
             {/* Report button */}
-            <TooltipButton tooltip="Report" placement="bottom">
-              <button
-                type="button"
-                onClick={() => setShowReportModal(true)}
-                style={{
-                  padding: "8px 16px",
-                  fontSize: 16,
-                  border: "none",
-                  borderRadius: 4,
-                  backgroundColor: "#fff",
-                  color: "#dc2626",
-                  cursor: "pointer",
-                }}
-              >
-                🚩
-              </button>
-            </TooltipButton>
+            <button
+              type="button"
+              onClick={() => setShowReportModal(true)}
+              style={{
+                padding: "8px 16px",
+                fontSize: 16,
+                border: "1px solid #dc2626",
+                borderRadius: 4,
+                backgroundColor: "#fff",
+                color: "#dc2626",
+                cursor: "pointer",
+              }}
+            >
+              🚩 Report
+            </button>
 
             {/* Block post (toggle) */}
-            <TooltipButton tooltip={blockedPost ? "Unblock" : "Block"} placement="bottom">
-              <button
-                type="button"
-                disabled={blocking}
-                onClick={async () => {
+            <button
+              type="button"
+              disabled={blocking}
+              onClick={async () => {
                 const token =
                   typeof window !== "undefined"
                     ? localStorage.getItem("userToken")
@@ -600,103 +595,94 @@ export default function PostPage({ post: initialPost, notFound, postIdFromProps 
                 } finally {
                   setBlocking(false);
                 }
-                }}
-                style={{
-                  padding: "8px 16px",
-                  fontSize: 16,
-                  border: "none",
-                  borderRadius: 4,
-                  backgroundColor: blockedPost ? "#6b7280" : "#fff",
-                  color: blockedPost ? "#fff" : "#374151",
-                  cursor: blocking ? "default" : "pointer",
-                }}
-              >
-                📛
-              </button>
-            </TooltipButton>
-            <TooltipButton tooltip={isLiked ? "Unlike" : "Like"} placement="bottom">
-              <button
-                type="button"
-                onClick={handleLike}
-                style={{
-                  padding: "8px 16px",
-                  fontSize: 16,
-                  border: "none",
-                  borderRadius: 4,
-                  backgroundColor: isLiked ? "#e11d48" : "#fff",
-                  color: isLiked ? "#fff" : "#333",
-                  cursor: "pointer",
-                  fontWeight: isLiked ? "bold" : "normal",
-                }}
-              >
-                {isLiked ? "🤍" : "❤️"}
-                {typeof likeCount === "number" ? ` (${likeCount})` : ""}
-              </button>
-            </TooltipButton>
-            <TooltipButton tooltip={isReposted ? "Unrepost" : "Repost"} placement="bottom">
-              <button
-                type="button"
-                onClick={handleRepost}
-                disabled={isOwner}
-                title={isOwner ? "You cannot repost your own post" : ""}
-                style={{
-                  padding: "8px 16px",
-                  fontSize: 16,
-                  border: "none",
-                  borderRadius: 4,
-                  backgroundColor: isReposted ? "#0ea5e9" : "#fff",
-                  color: isOwner ? "#aaa" : isReposted ? "#fff" : "#333",
-                  cursor: isOwner ? "not-allowed" : "pointer",
-                  fontWeight: isReposted ? "bold" : "normal",
-                  marginLeft: 8,
-                  opacity: isOwner ? 0.6 : 1,
-                }}
-              >
-                🔁
-                {typeof repostCount === "number" ? ` (${repostCount})` : ""}
-              </button>
-            </TooltipButton>
+              }}
+              style={{
+                padding: "8px 16px",
+                fontSize: 16,
+                border: "1px solid #6b7280",
+                borderRadius: 4,
+                backgroundColor: blockedPost ? "#6b7280" : "#fff",
+                color: blockedPost ? "#fff" : "#374151",
+                cursor: blocking ? "default" : "pointer",
+              }}
+            >
+              {blockedPost ? "Blocked post" : "Block post"}
+            </button>
+            <button
+              type="button"
+              onClick={handleLike}
+              style={{
+                padding: "8px 16px",
+                fontSize: 16,
+                border: "1px solid #333",
+                borderRadius: 4,
+                backgroundColor: isLiked ? "#e11d48" : "#fff",
+                color: isLiked ? "#fff" : "#333",
+                cursor: "pointer",
+                fontWeight: isLiked ? "bold" : "normal",
+              }}
+            >
+              ❤️ {isLiked ? "Liked" : "Like"}
+              {typeof likeCount === "number" ? ` (${likeCount})` : ""}
+            </button>
+            <button
+              type="button"
+              onClick={handleRepost}
+              disabled={isOwner}
+              title={isOwner ? "You cannot repost your own post" : ""}
+              style={{
+                padding: "8px 16px",
+                fontSize: 16,
+                border: "1px solid #333",
+                borderRadius: 4,
+                backgroundColor: isReposted ? "#0ea5e9" : "#fff",
+                color: isOwner ? "#aaa" : isReposted ? "#fff" : "#333",
+                cursor: isOwner ? "not-allowed" : "pointer",
+                fontWeight: isReposted ? "bold" : "normal",
+                marginLeft: 8,
+                opacity: isOwner ? 0.6 : 1,
+              }}
+            >
+              🔁 {isReposted ? "Reposted" : "Repost"}
+              {typeof repostCount === "number" ? ` (${repostCount})` : ""}
+            </button>
             <div style={{ display: "flex", gap: 8, position: "relative" }}>
               {/* Save Button */}
-              <TooltipButton tooltip={isFavorited ? "Unsave" : "Save Recipe"} placement="bottom">
-                <button
-                  onClick={handleSaveButton}
-                  style={{
-                    padding: "8px 16px",
-                    fontSize: 16,
-                    border: "none",
-                    borderRadius: 4,
-                    backgroundColor: isFavorited ? "#333" : "#fff",
-                    color: isFavorited ? "#fff" : "#333",
-                    cursor: "pointer",
-                    fontWeight: isFavorited ? "bold" : "normal",
-                  }}
-                >
-                  🏷️
-                </button>
-              </TooltipButton>
+              <button
+                onClick={handleSaveButton}
+                style={{
+                  padding: "8px 16px",
+                  fontSize: 16,
+                  border: "1px solid #333",
+                  borderRadius: 4,
+                  backgroundColor: isFavorited ? "#333" : "#fff",
+                  color: isFavorited ? "#fff" : "#333",
+                  cursor: "pointer",
+                  fontWeight: isFavorited ? "bold" : "normal",
+                }}
+              >
+                {isFavorited ? "Saved" : "Save"}
+              </button>
 
               {/* Share Button */}
-              <TooltipButton tooltip="Share" placement="bottom">
-                <button
-                  onClick={() => {
-                    // Try Web Share API first; fallback to popover
-                    sharePost(post.title, currentUrl, () =>
-                      setShowShareOptions(!showShareOptions)
-                    );
-                  }}
-                  style={{
-                    padding: "8px 16px",
-                    fontSize: 16,
-                    border: "none",
-                    borderRadius: 4,
-                    cursor: "pointer",
-                    backgroundColor: "#fff",
-                  }}
-                >
-                  🔗
-                </button>
-              </TooltipButton>
+              <button
+                onClick={() => {
+                  // Try Web Share API first; fallback to popover
+                  sharePost(post.title, currentUrl, () =>
+                    setShowShareOptions(!showShareOptions)
+                  );
+                }}
+                style={{
+                  padding: "8px 16px",
+                  fontSize: 16,
+                  border: "1px solid #333",
+                  borderRadius: 4,
+                  cursor: "pointer",
+                  backgroundColor: "#fff",
+                }}
+              >
+                🔗 Share
+              </button>
 
               {/* Share Options Popover */}
               {showShareOptions && (
@@ -809,34 +795,19 @@ export default function PostPage({ post: initialPost, notFound, postIdFromProps 
           </div>
           <div style={{ fontSize: 13, color: "#374151" }}>
             <strong style={{ display: "block", color: "#111827" }}>Dietary</strong>
-            {dietaryTags.length ? (
-              <div
+            {post.dietary ? (
+              <span
                 style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  gap: 6,
-                  marginTop: 4,
+                  display: "inline-block",
+                  background: "#e0f2fe",
+                  color: "#0369a1",
+                  border: "1px solid #bae6fd",
+                  borderRadius: 9999,
+                  padding: "2px 8px",
                 }}
               >
-                {dietaryTags.map((tag, idx) => (
-                  <span
-                    key={`${tag}-${idx}`}
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      background: "#e0f2fe",
-                      color: "#0369a1",
-                      border: "1px solid #bae6fd",
-                      borderRadius: 9999,
-                      padding: "2px 10px",
-                      fontWeight: 600,
-                      fontSize: 12,
-                    }}
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
+                {post.dietary}
+              </span>
             ) : (
               "—"
             )}

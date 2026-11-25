@@ -3,7 +3,6 @@ import "@/styles/globals.css";
 import "@/styles/main.css";
 import "@/styles/mainpage.css";
 import { SessionProvider } from "next-auth/react";
-import { ProfileProvider } from "../context/ProfileContext";
 
 export default function App({
   Component,
@@ -11,9 +10,7 @@ export default function App({
 }) {
   return (
     <SessionProvider session={session}>
-      <ProfileProvider>
-        <Component {...pageProps} />
-      </ProfileProvider>
+      <Component {...pageProps} />
     </SessionProvider>
   );
 }
